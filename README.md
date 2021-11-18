@@ -2,11 +2,11 @@
 
 ## 0. Introduction
 
-nebula-jdbc 是 基于 [nebula-java](https://github.com/vesoft-inc/nebula-java) 封装的，在其基础上对接了 JDBC 协议，实现 JDBC 的相关接口。比起  [nebula-java](https://github.com/vesoft-inc/nebula-java) 你可能更加熟悉  JDBC  的 API，使用 nebula-jdbc 你可以不必熟悉 [nebula-java](https://github.com/vesoft-inc/nebula-java) 的 API(熟悉的话会更好，这样你会理解为什么我们连接字符串的格式是为什么与传统的 JDBC 连接字符串不同)，像在 java 程序中操作关系型数据库一样操作 Nebula 服务
+nebula-jdbc 是基于 [nebula-java](https://github.com/vesoft-inc/nebula-java) 封装的，在其基础上对接了 JDBC 协议，实现 JDBC 的相关接口。比起  [nebula-java](https://github.com/vesoft-inc/nebula-java) 你可能更加熟悉  JDBC  的 API，使用 nebula-jdbc 你可以不必熟悉 [nebula-java](https://github.com/vesoft-inc/nebula-java) 的 API(熟悉的话会更好，这样你会理解为什么我们连接字符串的格式是为什么与传统的 JDBC 连接字符串不同)，像在 java 程序中操作关系型数据库一样操作 Nebula 服务
 
 ## 1. Architecture
 
-nebula-jdbc 主要的的一些类和接口的关系如下：(蓝色实线是类之间的 extends 关系，绿色实线是接口之间的 implements 关系，绿色虚线是抽象类与接口之间的 implements 关系)
+nebula-jdbc 主要的一些类和接口的关系如下：(蓝色实线是类之间的 extends 关系，绿色实线是接口之间的 implements 关系，绿色虚线是抽象类与接口之间的 implements 关系)
 
 ![图片](docs/architecture.png)
 
