@@ -7,6 +7,7 @@ import com.vesoft.nebula.client.graph.NebulaPoolConfig;
 import com.vesoft.nebula.client.graph.data.HostAddress;
 import com.vesoft.nebula.client.graph.data.ResultSet;
 import com.vesoft.nebula.client.graph.exception.AuthFailedException;
+import com.vesoft.nebula.client.graph.exception.ClientServerIncompatibleException;
 import com.vesoft.nebula.client.graph.exception.IOErrorException;
 import com.vesoft.nebula.client.graph.exception.NotValidConnectionException;
 import com.vesoft.nebula.client.graph.net.NebulaPool;
@@ -43,7 +44,7 @@ public class RunMeBeforeTest {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Test
-    public void createTestGraphSpace() throws SQLException, IOErrorException, AuthFailedException, NotValidConnectionException, UnknownHostException, InterruptedException {
+    public void createTestGraphSpace() throws SQLException, IOErrorException, AuthFailedException, NotValidConnectionException, UnknownHostException, InterruptedException, ClientServerIncompatibleException {
 
         NebulaPoolConfig nebulaPoolConfig = new NebulaPoolConfig();
         List<HostAddress> addresses = Arrays.asList(new HostAddress(IP, PORT));
