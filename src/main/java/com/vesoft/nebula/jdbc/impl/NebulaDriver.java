@@ -7,10 +7,7 @@ package com.vesoft.nebula.jdbc.impl;
 
 import com.vesoft.nebula.client.graph.NebulaPoolConfig;
 import com.vesoft.nebula.client.graph.data.HostAddress;
-import com.vesoft.nebula.client.graph.exception.AuthFailedException;
-import com.vesoft.nebula.client.graph.exception.IOErrorException;
-import com.vesoft.nebula.client.graph.exception.InvalidConfigException;
-import com.vesoft.nebula.client.graph.exception.NotValidConnectionException;
+import com.vesoft.nebula.client.graph.exception.*;
 import com.vesoft.nebula.client.graph.net.NebulaPool;
 import com.vesoft.nebula.client.graph.net.Session;
 import com.vesoft.nebula.jdbc.NebulaAbstractDriver;
@@ -113,7 +110,7 @@ public class NebulaDriver extends NebulaAbstractDriver {
         Session nebulaSession;
         try{
             nebulaSession = nebulaPool.getSession(user, password, reconnect);
-        }catch (NotValidConnectionException | IOErrorException | AuthFailedException e){
+        }catch (NotValidConnectionException | IOErrorException | AuthFailedException | ClientServerIncompatibleException e){
             throw new SQLException(e);
         }
         return nebulaSession;
