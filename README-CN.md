@@ -2,6 +2,11 @@
 
 中文版 | [English](/README.md)
 
+| JDBC 分支 | Nebula Graph 版本 |
+|:--------------:|:-------------------:|
+|    v2.5        |    2.5.0,2.5.1      |
+|    v2.6.2      |    2.6.0,2.6.1,2.6.2|
+
 ## 0. Introduction
 
 nebula-jdbc 是基于 [nebula-java](https://github.com/vesoft-inc/nebula-java) 封装的，在其基础上对接了 JDBC 协议，实现 JDBC 的相关接口。比起  [nebula-java](https://github.com/vesoft-inc/nebula-java) 你可能更加熟悉  JDBC  的 API，使用 nebula-jdbc 你可以不必熟悉 [nebula-java](https://github.com/vesoft-inc/nebula-java) 的 API(熟悉的话会更好，这样你会理解为什么我们连接字符串的格式是为什么与传统的 JDBC 连接字符串不同)，像在 java 程序中操作关系型数据库一样操作 Nebula 服务
