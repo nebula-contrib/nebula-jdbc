@@ -2,6 +2,14 @@
 
 English | [中文版](/README-CN.md)
 
+There are the version correspondence between client and Nebula:
+
+| JDBC Branch | Nebula Graph Version |
+|:--------------:|:-------------------:|
+|    v2.5        |    2.5.0,2.5.1      |
+|    v2.6.2      |    2.6.0,2.6.1,2.6.2|
+
+
 ## 0. Introduction
 
 nebula-jdbc is encapsulated based on  [nebula-java](https://github.com/vesoft-inc/nebula-java), interfacing with the JDBC protocol and implementing JDBC-related interfaces. You may be more familiar with the JDBC API than with  [nebula-java](https://github.com/vesoft-inc/nebula-java). With nebula-jdbc you do not need to be familiar with the  [nebula-java](https://github.com/vesoft-inc/nebula-java) API (it is better if you are, so that you understand why our connection strings are formatted differently from the traditional JDBC connection strings) and you can manipulate the Nebula service in the same way as you manipulate relational databases in a java application
