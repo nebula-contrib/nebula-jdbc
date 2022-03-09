@@ -5,9 +5,10 @@ English | [中文版](/README-CN.md)
 There are the version correspondence between client and Nebula:
 
 | JDBC Branch | Nebula Graph Version |
-|:--------------:|:-------------------:|
-|    v2.5        |    2.5.0,2.5.1      |
-|    v2.6.2      |    2.6.0,2.6.1,2.6.2|
+|:-----------:|:--------------------:|
+|    v2.5     |     2.5.0, 2.5.1     |
+|   v2.6.2    | 2.6.0, 2.6.1, 2.6.2  |
+|   v3.0.0    |        3.0.0         |
 
 
 ## 0. Introduction
