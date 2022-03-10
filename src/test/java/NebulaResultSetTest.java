@@ -10,6 +10,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,16 +93,16 @@ public class NebulaResultSetTest {
     @Test
     public void checkReturnValueTest() throws SQLException {
 
-        String queryReturnValue = "match (v:testNode) return id(v) as id, v.theString as theString, v.theInt as theInt, " +
-                "v.theDouble as theDouble, v.theTrueBool as theTrueBool, v.theFalseBool as theFalseBool, " +
-                "v.theDate as theDate, v.theTime as theTime, v.theDatetime as theDatetime, " +
+        String queryReturnValue = "match (v:testNode) return id(v) as id, v.testNode.theString as theString, v.testNode.theInt as theInt, " +
+                "v.testNode.theDouble as theDouble, v.testNode.theTrueBool as theTrueBool, v.testNode.theFalseBool as theFalseBool, " +
+                "v.testNode.theDate as theDate, v.testNode.theTime as theTime, v.testNode.theDatetime as theDatetime, " +
                 "[\"ok\", 1, 33.3, false, true, date(\"1937-07-07\"), time(\"12:06:20.418\"), datetime(\"1937-07-07T12:06:20.159\")] as theList, " +
                 "{\"ok\", 1, 33.3, false, true, date(\"2020-07-15\"), time(\"22:06:20.163\"), datetime(\"2020-07-15T22:06:16.416\")} as theSet, " +
                 "{key: 'Value', listKey: [{inner: 'Map1'}, {inner: 'Map2'}]} as theMap " +
                 "ORDER BY id ASC";
         String queryNode = "MATCH (v:testNode) RETURN v as theNode;";
         String queryEdge = "MATCH (v1:testNode)-[e:testEdge]-(v2:testNode) RETURN e as theEdge;";
-        String queryPath = "FIND ALL PATH FROM \"testNode_1\" TO \"testNode_2\" OVER *;";
+        String queryPath = "FIND ALL PATH FROM \"testNode_1\" TO \"testNode_2\" OVER * YIELD path AS p;";
 
         SQLException queryByExecuteUpdateException = assertThrows(SQLException.class, () -> statement.executeUpdate(queryReturnValue));
         assertEquals("Method executeUpdate() can only execute nGql to update data, but the current nGql do not contains any update keyword in [update, delete, insert, upsert, create, drop, alter, rebuild], please modify your nGql or use executeQuery(), execute().",
@@ -151,10 +152,10 @@ public class NebulaResultSetTest {
 
         NebulaResultSet finalNebulaResultSet = nebulaResultSet;
         SQLException getNotExistColumnByIndexException = assertThrows(SQLException.class, () -> finalNebulaResultSet.getObject(13));
-        assertEquals("column index [13] is invalid, please check your parameters (the first one should be represent as 1 instead of 0)", getNotExistColumnByIndexException.getMessage());
+        assertEquals("column index [13] is invalid, please check your parameters (the first one should be represent as 1 instead of 0).", getNotExistColumnByIndexException.getMessage());
 
         SQLException getNotExistColumnByLabelException = assertThrows(SQLException.class, () -> finalNebulaResultSet.getObject("notExistLabel"));
-        assertEquals("No such column [notExistLabel] found, please check your parameters", getNotExistColumnByLabelException.getMessage());
+        assertEquals("No such column [notExistLabel] found, please check your parameters.", getNotExistColumnByLabelException.getMessage());
 
         nebulaResultSet = (NebulaResultSet)statement.executeQuery(queryNode);
         assertTrue(nebulaResultSet.next());
@@ -174,9 +175,9 @@ public class NebulaResultSetTest {
 
     @Test
     public void resultSetMaDataTest() throws SQLException {
-        String queryReturnValue = "match (v:testNode) return id(v) as id, v.theString as theString, v.theInt as theInt, " +
-                "v.theDouble as theDouble, v.theTrueBool as theTrueBool, v.theFalseBool as theFalseBool, " +
-                "v.theDate as theDate, v.theTime as theTime, v.theDatetime as theDatetime, " +
+        String queryReturnValue = "match (v:testNode) return id(v) as id, v.testNode.theString as theString, v.testNode.theInt as theInt, " +
+                "v.testNode.theDouble as theDouble, v.testNode.theTrueBool as theTrueBool, v.testNode.theFalseBool as theFalseBool, " +
+                "v.testNode.theDate as theDate, v.testNode.theTime as theTime, v.testNode.theDatetime as theDatetime, " +
                 "[\"ok\", 1, 33.3, false, true, date(\"1937-07-07\"), time(\"12:06:20.418\"), datetime(\"1937-07-07T12:06:20.159\")] as theList, " +
                 "{\"ok\", 1, 33.3, false, true, date(\"2020-07-15\"), time(\"22:06:20.163\"), datetime(\"2020-07-15T22:06:16.416\")} as theSet, " +
                 "{key: 'Value', listKey: [{inner: 'Map1'}, {inner: 'Map2'}]} as theMap " +
@@ -206,19 +207,24 @@ public class NebulaResultSetTest {
         log.warn("make sure you have set the timezone in server into CST+8.");
         statement.executeUpdate("INSERT VERTEX testNode (theString, theInt, theDouble, theTrueBool, theFalseBool, theDate, theTime, theDatetime) " +
                 "VALUES \"testNode_9\":(\"Summer\", 19, 93.65, true, false, date(\"1950-01-26\"), time(\"17:23:30.153\"), datetime(\"1950-07-15T01:06:20.456\"));");
-        NebulaResultSet resultSet = (NebulaResultSet)statement.executeQuery("MATCH (v:testNode) RETURN id(v) AS id ,v.theDate as theDate, v.theTime as theTime, v.theDatetime as theDatetime ORDER BY id ASC");
+        NebulaResultSet resultSet = (NebulaResultSet)statement.executeQuery("MATCH (v:testNode) RETURN id(v) AS id ,v.testNode.theDate as theDate, v.testNode.theTime as theTime, v.testNode.theDatetime as theDatetime ORDER BY id ASC");
         resultSet.absolute(7);
-        assertEquals(Date.valueOf("1950-01-26"), resultSet.getDate("theDate"));
-        assertEquals(Time.valueOf("09:23:30"), resultSet.getTime("theTime"));
-        DateTimeWrapper theDatetime = resultSet.getDateTime("theDatetime");
-        assertEquals(1950, theDatetime.getYear());
-        assertEquals(7, theDatetime.getMonth());
-        assertEquals(14, theDatetime.getDay());
-        assertEquals(17, theDatetime.getHour());
-        assertEquals(6, theDatetime.getMinute());
-        assertEquals(20, theDatetime.getSecond());
+        try {
+            assertEquals(Date.valueOf("1950-01-26"), resultSet.getDate("theDate"));
+            assertEquals(Time.valueOf("09:23:30"), resultSet.getTime("theTime"));
+            DateTimeWrapper theDatetime = resultSet.getDateTime("theDatetime");
+            assertEquals(1950, theDatetime.getYear());
+            assertEquals(7, theDatetime.getMonth());
+            assertEquals(14, theDatetime.getDay());
+            assertEquals(17, theDatetime.getHour());
+            assertEquals(6, theDatetime.getMinute());
+            assertEquals(20, theDatetime.getSecond());
+        } catch (AssertionFailedError e) {
+            log.error("error occurs here, maybe time zone in server is not CST+8");
+            statement.executeUpdate("DELETE VERTEX \"testNode_9\"");
+        }
 
-        statement.executeUpdate("DELETE VERTEX \"testNode_9\"");
+
     }
 
 
