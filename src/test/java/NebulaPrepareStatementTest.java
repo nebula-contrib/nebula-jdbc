@@ -40,7 +40,7 @@ public class NebulaPrepareStatementTest {
 
         String insert = "INSERT VERTEX testNode (theString, theInt, theDouble, theTrueBool, theFalseBool, theDate, theTime, theDatetime) VALUES " +
                 "\"testNode_8\":(?, ?, ?, ?, ?, ?, ?, ?); ";
-        String query = "MATCH (v:testNode) RETURN id(v) as id, v.theInt as theInt ORDER BY id ASC;";
+        String query = "MATCH (v:testNode) RETURN id(v) as id, v.testNode.theInt as theInt ORDER BY id ASC;";
         String update = "UPDATE VERTEX ON testNode \"testNode_8\" SET theInt = theInt + ?; ";
         String delete = "DELETE VERTEX ?; ";
 
