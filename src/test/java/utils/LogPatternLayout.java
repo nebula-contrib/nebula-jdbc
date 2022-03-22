@@ -3,7 +3,7 @@
  * This source code is licensed under Apache 2.0 License.
  */
 
-package com.vesoft.nebula.jdbc.utils;
+package utils;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.PatternLayout;
