@@ -19,6 +19,9 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ *
+ */
 public abstract class NebulaAbstractPreparedStatement extends NebulaStatement implements PreparedStatement{
 
     protected String                  rawNGQL;
@@ -58,7 +61,9 @@ public abstract class NebulaAbstractPreparedStatement extends NebulaStatement im
 
     @Override
     public ResultSetMetaData getMetaData() throws SQLException {
-        return this.getMetaData();
+
+        ResultSet currentResultSet = this.currentResultSet;
+        return currentResultSet.getMetaData();
     }
 
     @Override
