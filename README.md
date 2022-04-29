@@ -30,6 +30,17 @@ Once the `Connection` is obtained, the user can get a `Statement` or `PreparedSt
 
 ## 2. Usage
 
+### import
+```xml
+<dependency>
+    <groupId>org.nebula-contrib</groupId>
+    <artifactId>nebula-jdbc</artifactId>
+    <version>3.0.0</version>
+</dependency>
+```
+
+### example
+
 ```java
 // Get and register the default NebulaDriver, the default connection address is 127.0.0.1:9669, the rest of the default parameters can be found in NebulaDriver::setDefaultPoolProperties()
 NebulaDriver defaultDriver = new NebulaDriver();
