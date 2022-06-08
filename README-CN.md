@@ -31,9 +31,10 @@ nebula-jdbc 主要的一些类和接口的关系如下：(蓝色实线是类之�
 <dependency>
     <groupId>org.nebula-contrib</groupId>
     <artifactId>nebula-jdbc</artifactId>
-    <version>3.0.0</version>
+    <version>$VERSION</version>
 </dependency>
 ```
+[这里](https://github.com/nebula-contrib/nebula-jdbc/wiki/Nebula-JDBC-Wiki#nebula-jdbc-version-mapping-to-nebula-graph-core)是版本对应表
 
 ### 使用示例
 
