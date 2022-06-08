@@ -26,6 +26,18 @@ nebula-jdbc 主要的一些类和接口的关系如下：(蓝色实线是类之�
 
 ## 2. Usage
 
+### 引入依赖
+```xml
+<dependency>
+    <groupId>org.nebula-contrib</groupId>
+    <artifactId>nebula-jdbc</artifactId>
+    <version>$VERSION</version>
+</dependency>
+```
+[这里](https://github.com/nebula-contrib/nebula-jdbc/wiki/Nebula-JDBC-Wiki#nebula-jdbc-version-mapping-to-nebula-graph-core)是版本对应表
+
+### 使用示例
+
 ```java
 // 获取并注册默认的 NebulaDriver，默认的连接地址是 127.0.0.1：9669，其余的默认参数可以查看 NebulaDriver::setDefaultPoolProperties()
 NebulaDriver defaultDriver = new NebulaDriver();

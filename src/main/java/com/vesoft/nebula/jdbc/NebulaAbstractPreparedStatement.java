@@ -58,7 +58,7 @@ public abstract class NebulaAbstractPreparedStatement extends NebulaStatement im
 
     @Override
     public ResultSetMetaData getMetaData() throws SQLException {
-        return this.getMetaData();
+        return currentResultSet != null ? currentResultSet.getMetaData() : null;
     }
 
     @Override
