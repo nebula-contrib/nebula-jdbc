@@ -35,7 +35,7 @@ Once the `Connection` is obtained, the user can get a `Statement` or `PreparedSt
 <dependency>
     <groupId>org.nebula-contrib</groupId>
     <artifactId>nebula-jdbc</artifactId>
-    <version>3.0.0</version>
+    <version>$VERSION</version>
 </dependency>
 ```
 
