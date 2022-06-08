@@ -39,6 +39,7 @@ Once the `Connection` is obtained, the user can get a `Statement` or `PreparedSt
 </dependency>
 ```
 
+[Here](https://github.com/nebula-contrib/nebula-jdbc/wiki/Nebula-JDBC-Wiki#nebula-jdbc-version-mapping-to-nebula-graph-core) is the version mapping table
 ### example
 
 ```java
