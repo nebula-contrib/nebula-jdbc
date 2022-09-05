@@ -127,6 +127,7 @@ public class NebulaDriver extends NebulaAbstractDriver {
     @Override
     public Connection connect(String url, Properties connectionConfig) throws SQLException {
         if(this.acceptsURL(url)){
+            url = parseAddress(url);
             parseUrlProperties(url, connectionConfig);
             this.connectionConfig.put("url", url);
             String graphSpace = this.connectionConfig.getProperty("graphSpace");
@@ -138,6 +139,50 @@ public class NebulaDriver extends NebulaAbstractDriver {
                     "url example: jdbc:nebula://graphSpace " +
                     "make sure your url match this format.");
         }
+    }
+
+    /**
+     * Parse an extended JDBC url supporting the syntax:
+     *
+     *      jdbc:nebula://host:port,host:port,.../graphSpace
+     *
+     * @param url extended url
+     * @return the original url 'jdbc:nebula://graphSpace'
+     * @throws SQLException if the servers are not specified as 'host:port' or 'port' is not an integer
+     */
+    protected String parseAddress(String url) throws SQLException {
+        // jdbc:nebula://ip:port,ip:port,.../graphspace
+
+        int b = url.indexOf("//");
+        int e = url.indexOf("/", b+2);
+        if (e == -1)
+            return url;
+
+        String addresses = url.substring(b+2, e);
+        url = url.substring(0, b+2) + url.substring(e+1);
+
+        String[] addressesList = addresses.split(",");
+        List<HostAddress> customizedAddressList = new ArrayList<>();
+
+        for (String address : addressesList) {
+            String[] addressInfo =  address.split(":");
+            if(addressInfo.length != 2){
+                throw new SQLException(String.format("url [%s] is invalid, please make sure your url match thr format: \"ip:port\".", url));
+            }
+            String ip = addressInfo[0];
+            int port = Integer.parseInt(addressInfo[1]);
+            customizedAddressList.add(new HostAddress(ip, port));
+        }
+
+        // close the current pool that uses '127.0.0.1' (WHY????)
+        this.nebulaPool.close();
+        // set in the pool properties the new 'addressList'
+        this.poolProperties.put("addressList", customizedAddressList);
+        // create & initialize a new pool
+        this.nebulaPool = new NebulaPool();
+        this.initNebulaPool();
+
+        return url;
     }
 
     /**
