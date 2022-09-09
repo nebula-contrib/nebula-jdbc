@@ -6,6 +6,7 @@
 package com.vesoft.nebula.jdbc.impl;
 
 import com.vesoft.nebula.jdbc.NebulaAbstractResultSetMetaData;
+import com.vesoft.nebula.client.graph.data.ResultSet;
 
 import java.sql.SQLException;
 
@@ -32,30 +33,30 @@ public class NebulaResultSetMetaData extends NebulaAbstractResultSetMetaData {
     public static void release(){
         nebulaResultSetMetaData = null;
     }
+    
+    public List<String> getColumnNames() {
+        return nebulaResultSet == null ? null : nebulaResultSet.getColumnNames();
+    }
 
     @Override
     public int getColumnCount() throws SQLException {
-        return this.nebulaResultSet.getColumnNames().size();
+        List<String> names = getColumnNames();
+        return names == null ? 0 : names.size();
     }
 
     @Override
     public String getColumnName(int column) throws SQLException {
-        int columnCount = this.getColumnCount();
-        if(column <= columnCount && column > 0){
-            return this.nebulaResultSet.getColumnNames().get(column - 1);
-        }else {
-            throw new SQLException(String.format("The numbers of column is [%d], your column index [%d] is invalid.", columnCount, column));
+        List<String> names = getColumnNames();
+        if(names != null && column <= names.size() && column > 0){
+            return names.get(column - 1);
         }
+        throw new SQLException(String.format("The numbers of column is [%d], your column index [%d] is invalid.", columnCount, column));
     }
 
     @Override
     public String getSchemaName(int column) throws SQLException {
-        int columnCount = this.getColumnCount();
-        if(column <= columnCount && column > 0){
-            return this.nebulaResultSet.getNativeNebulaResultSet().getSpaceName();
-        }else {
-            throw new SQLException(String.format("The numbers of column is [%d], your column index [%d] is invalid.", columnCount, column));
-        }
+        ResultSet rs = nebulaResultSet.getNativeNebulaResultSet();
+        return rs == null ? null : rs.getSpaceName();
     }
 
 }
