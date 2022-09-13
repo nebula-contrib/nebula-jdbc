@@ -78,7 +78,7 @@ public class NebulaDriverTest {
         poolProperties.put("intervalIdle", 1256);
         poolProperties.put("waitTime", 1256);
 
-        NebulaDriver customizedDriver = new NebulaDriver(poolProperties);
+        NebulaDriver customizedDriver = new NebulaDriver();
         NebulaPoolConfig nebulaPoolConfig = customizedDriver.getNebulaPoolConfig();
 
         assertEquals(poolProperties.getOrDefault("minConnsSize", 0), nebulaPoolConfig.getMinConnSize());
@@ -108,7 +108,7 @@ public class NebulaDriverTest {
 
     @Test
     public void getCustomizedUrlDriverTest() throws SQLException {
-        NebulaDriver customizedUrlDriver = new NebulaDriver(RunMeBeforeTest.IP + ":" + RunMeBeforeTest.PORT);
+        NebulaDriver customizedUrlDriver = new NebulaDriver();
 
         NebulaPoolConfig nebulaPoolConfig = customizedUrlDriver.getNebulaPoolConfig();
         assertEquals(0, nebulaPoolConfig.getMinConnSize());

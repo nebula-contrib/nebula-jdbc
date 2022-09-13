@@ -48,7 +48,12 @@ public abstract class NebulaAbstractDriver implements java.sql.Driver{
             }
         }
 
-        String graphSpace = url.split("//")[1];
+        // extract graph space name
+        int indexOfAddress = url.indexOf("//");
+        int indexOfSpace = url.indexOf("/", indexOfAddress+2);
+        String[] properties = url.substring(indexOfSpace + 1).split("\\?");
+
+        String graphSpace = properties[0];
         parseUrlGetConfig.put("graphSpace", graphSpace);
         parseUrlGetConfig.put("url", url);
         this.connectionConfig = parseUrlGetConfig;
