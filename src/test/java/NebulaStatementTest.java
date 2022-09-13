@@ -26,8 +26,8 @@ public class NebulaStatementTest {
     Statement statement;
 
     @BeforeAll
-    public void getConnectionAndStatement() throws SQLException {
-        driver = new NebulaDriver(RunMeBeforeTest.IP + ":" + RunMeBeforeTest.PORT);
+    public void getConnectionAndStatement() throws SQLException, ClassNotFoundException {
+        Class.forName("com.vesoft.nebula.jdbc.impl.NebulaDriver");
         connection = DriverManager.getConnection(RunMeBeforeTest.URL, RunMeBeforeTest.USERNAME, RunMeBeforeTest.PASSWORD);
         statement = connection.createStatement();
     }

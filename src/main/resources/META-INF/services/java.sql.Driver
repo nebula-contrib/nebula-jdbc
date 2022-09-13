@@ -1,2 +1,2 @@
 # with the declaration below, user no longer need to explicitly load JDBC drivers using Class.forName("com.vesoft.nebula.jdbc.impl.NebulaDriver");
-# com.vesoft.nebula.jdbc.impl.NebulaDriver
+com.vesoft.nebula.jdbc.impl.NebulaDriver

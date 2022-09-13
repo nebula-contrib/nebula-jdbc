@@ -91,12 +91,11 @@ public abstract class NebulaAbstractConnection implements Connection{
 
     @Override
     public void setReadOnly(boolean readOnly) throws SQLException {
-        throw ExceptionBuilder.buildUnsupportedOperationException();
     }
 
     @Override
     public boolean isReadOnly() throws SQLException {
-        throw ExceptionBuilder.buildUnsupportedOperationException();
+        return false;
     }
 
     @Override

@@ -39,26 +39,30 @@ public class NebulaConnection implements Connection {
     private NebulaDriver nebulaDriver;
 
     private Session nebulaSession;
-    private String graphSpace = "unknown";
+    private String graphSpace = null;
     private boolean isClosed = false;
     private Properties connectionConfig;
+    private int holdability;
+
 
     protected NebulaConnection(NebulaDriver nebulaDriver, String graphSpace) throws SQLException {
+        this.holdability = NebulaAbstractResultSet.CLOSE_CURSORS_AT_COMMIT;
         this.nebulaDriver = nebulaDriver;
         this.nebulaSession = this.nebulaDriver.getSessionFromNebulaPool();
         this.connectionConfig = this.nebulaDriver.getConnectionConfig();
 
         // check whether access the given graph space successfully.
-        try{
+        try {
             ResultSet result = nebulaSession.execute("use " + graphSpace);
-            if(result.isSucceeded()){
+            if (result.isSucceeded()) {
                 this.graphSpace = graphSpace;
                 log.info(String.format("Access graph space [%s] succeeded", graphSpace));
-            }else {
-                throw new SQLException(String.format("Access graph space [%s] failed. Error code: %d, Error message: %s",
+            } else {
+                throw new SQLException(String.format("Access graph space [%s] failed. Error code:" +
+                                " %d, Error message: %s",
                         graphSpace, result.getErrorCode(), result.getErrorMessage()));
             }
-        }catch (IOErrorException e){
+        } catch (IOErrorException e) {
             throw new SQLException(e);
         }
     }
@@ -66,7 +70,7 @@ public class NebulaConnection implements Connection {
     public ResultSet execute(String nGql) throws SQLException {
         this.checkClosed();
         try {
-            return nebulaSession.execute(nGql) ;
+            return nebulaSession.execute(nGql);
         } catch (IOErrorException e) {
             throw new SQLException(e.getMessage());
         }
@@ -101,15 +105,19 @@ public class NebulaConnection implements Connection {
 
     @Override
     public Statement createStatement(int resultSetType, int resultSetConcurrency) throws SQLException {
-        log.info("You are calling method \"Statement createStatement(int resultSetType, int resultSetConcurrency)\", " +
-                "the supported type is [TYPE_SCROLL_INSENSITIVE] and the supported concurrency is [CONCUR_READ_ONLY]. " +
+        log.info("You are calling method \"Statement createStatement(int resultSetType, int " +
+                "resultSetConcurrency)\", " +
+                "the supported type is [TYPE_SCROLL_INSENSITIVE] and the supported concurrency is" +
+                " [CONCUR_READ_ONLY]. " +
                 "That is, the method you call is the same as \"Statement createStatement()\". ");
         return this.createStatement();
     }
 
     @Override
-    public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
-        log.info("You are calling method \"Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability)\", " +
+    public Statement createStatement(int resultSetType, int resultSetConcurrency,
+                                     int resultSetHoldability) throws SQLException {
+        log.info("You are calling method \"Statement createStatement(int resultSetType, int " +
+                "resultSetConcurrency, int resultSetHoldability)\", " +
                 "the supported type is [TYPE_SCROLL_INSENSITIVE], " +
                 "the supported concurrency is [CONCUR_READ_ONLY]" +
                 "and the supported holdability is [CLOSE_CURSORS_AT_COMMIT]." +
@@ -124,19 +132,27 @@ public class NebulaConnection implements Connection {
     }
 
     @Override
-    public PreparedStatement prepareStatement(String nGql, int resultSetType, int resultSetConcurrency) throws SQLException {
-        log.info("You are calling method \"PreparedStatement prepareStatement(String nGql, int resultSetType, int resultSetConcurrency)\", " +
-                "the supported type is [TYPE_SCROLL_INSENSITIVE] and the supported concurrency is [CONCUR_READ_ONLY]. " +
-                "That is, the method you call is the same as \"PreparedStatement prepareStatement(String nGql)\". ");
+    public PreparedStatement prepareStatement(String nGql, int resultSetType,
+                                              int resultSetConcurrency) throws SQLException {
+        log.info("You are calling method \"PreparedStatement prepareStatement(String nGql, int " +
+                "resultSetType, int resultSetConcurrency)\", " +
+                "the supported type is [TYPE_SCROLL_INSENSITIVE] and the supported concurrency is" +
+                " [CONCUR_READ_ONLY]. " +
+                "That is, the method you call is the same as \"PreparedStatement prepareStatement" +
+                "(String nGql)\". ");
         return this.prepareStatement(nGql);
     }
 
     @Override
-    public PreparedStatement prepareStatement(String nGql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
-        log.info("You are calling method \"PreparedStatement prepareStatement(String nGql, int resultSetType, int resultSetConcurrency, int resultSetHoldability)\", " +
-                "the supported type is [TYPE_SCROLL_INSENSITIVE] and the supported concurrency is [CONCUR_READ_ONLY] " +
+    public PreparedStatement prepareStatement(String nGql, int resultSetType,
+                                              int resultSetConcurrency, int resultSetHoldability) throws SQLException {
+        log.info("You are calling method \"PreparedStatement prepareStatement(String nGql, int " +
+                "resultSetType, int resultSetConcurrency, int resultSetHoldability)\", " +
+                "the supported type is [TYPE_SCROLL_INSENSITIVE] and the supported concurrency is" +
+                " [CONCUR_READ_ONLY] " +
                 "and the supported holdability is [CLOSE_CURSORS_AT_COMMIT]. " +
-                "That is, the method you call is the same as \"PreparedStatement prepareStatement(String nGql)\". ");
+                "That is, the method you call is the same as \"PreparedStatement prepareStatement" +
+                "(String nGql)\". ");
         return this.prepareStatement(nGql);
     }
 
@@ -158,27 +174,27 @@ public class NebulaConnection implements Connection {
     @Override
     public void setSchema(String schema) throws SQLException {
         // check whether change graph space successfully.
-        try{
+        try {
             ResultSet result = nebulaSession.execute("use " + schema);
-            if(result.isSucceeded()){
+            if (result.isSucceeded()) {
                 this.graphSpace = schema;
                 this.connectionConfig.setProperty("graphSpace", graphSpace);
                 this.connectionConfig.setProperty("url", "jdbc:nebula://" + graphSpace);
                 log.info(String.format("Change graph space to [%s] succeeded", graphSpace));
-            }else {
-                log.error(String.format("Change graph space to [%s] failed. Error code: %d, Error message: %s",
+            } else {
+                log.error(String.format("Change graph space to [%s] failed. Error code: %d, Error" +
+                                " message: %s",
                         schema, result.getErrorCode(), result.getErrorMessage()));
             }
-        }catch (IOErrorException e){
+        } catch (IOErrorException e) {
             throw new SQLException(e);
         }
 
     }
 
-    public Properties getConnectionConfig(){
+    public Properties getConnectionConfig() {
         return this.connectionConfig;
     }
-
 
 
     @Override
@@ -207,7 +223,8 @@ public class NebulaConnection implements Connection {
     }
 
     @Override
-    public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
+    public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency,
+                                         int resultSetHoldability) throws SQLException {
         throw ExceptionBuilder.buildUnsupportedOperationException();
     }
 
@@ -218,12 +235,11 @@ public class NebulaConnection implements Connection {
 
     @Override
     public void setAutoCommit(boolean autoCommit) throws SQLException {
-        throw ExceptionBuilder.buildUnsupportedOperationException();
     }
 
     @Override
     public boolean getAutoCommit() throws SQLException {
-        throw ExceptionBuilder.buildUnsupportedOperationException();
+        return false;
     }
 
     @Override
@@ -243,12 +259,11 @@ public class NebulaConnection implements Connection {
 
     @Override
     public void setReadOnly(boolean readOnly) throws SQLException {
-        throw ExceptionBuilder.buildUnsupportedOperationException();
     }
 
     @Override
     public boolean isReadOnly() throws SQLException {
-        throw ExceptionBuilder.buildUnsupportedOperationException();
+        return false;
     }
 
     @Override
@@ -263,43 +278,40 @@ public class NebulaConnection implements Connection {
 
     @Override
     public void setTransactionIsolation(int level) throws SQLException {
-        throw ExceptionBuilder.buildUnsupportedOperationException();
+
     }
 
     @Override
     public int getTransactionIsolation() throws SQLException {
-        throw ExceptionBuilder.buildUnsupportedOperationException();
+        return Connection.TRANSACTION_NONE;
     }
 
     @Override
     public SQLWarning getWarnings() throws SQLException {
-        throw ExceptionBuilder.buildUnsupportedOperationException();
+        return null;
     }
 
     @Override
     public void clearWarnings() throws SQLException {
-        throw ExceptionBuilder.buildUnsupportedOperationException();
     }
 
     @Override
     public Map<String, Class<?>> getTypeMap() throws SQLException {
-        throw ExceptionBuilder.buildUnsupportedOperationException();
+        return null;
     }
 
     @Override
     public void setTypeMap(Map<String, Class<?>> map) throws SQLException {
-        throw ExceptionBuilder.buildUnsupportedOperationException();
     }
 
     @Override
     public void setHoldability(int holdability) throws SQLException {
-        throw ExceptionBuilder.buildUnsupportedOperationException();
     }
 
     @Override
     public int getHoldability() throws SQLException {
         // CLOSE_CURSORS_AT_COMMIT
-        return 2;
+        return this.holdability;
     }
 
     @Override
@@ -314,7 +326,6 @@ public class NebulaConnection implements Connection {
 
     @Override
     public void rollback(Savepoint savepoint) throws SQLException {
-        throw ExceptionBuilder.buildUnsupportedOperationException();
     }
 
     @Override
@@ -344,7 +355,27 @@ public class NebulaConnection implements Connection {
 
     @Override
     public boolean isValid(int timeout) throws SQLException {
-        throw ExceptionBuilder.buildUnsupportedOperationException();
+        if (timeout < 0) {
+            throw new SQLException("Timeout value mustn't be less 0");
+        }
+
+        if (isClosed()) {
+            return false;
+        }
+
+        Statement statement = null;
+        try {
+            statement = createStatement();
+            if (statement.execute("YIELD 1")) {
+                return true;
+            } else {
+                return false;
+            }
+        } finally {
+            if (statement != null) {
+                statement.close();
+            }
+        }
     }
 
     @Override
@@ -369,7 +400,7 @@ public class NebulaConnection implements Connection {
 
     @Override
     public void abort(Executor executor) throws SQLException {
-        throw ExceptionBuilder.buildUnsupportedOperationException();
+        this.close();
     }
 
     @Override

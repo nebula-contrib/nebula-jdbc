@@ -33,7 +33,7 @@ public class RunMeBeforeTest {
     public static final String USERNAME = "root";
     public static final String PASSWORD = "nebula";
 
-    public static final String JDBC_PREFIX = "jdbc:nebula://";
+    public static final String JDBC_PREFIX = "jdbc:nebula://127.0.0.1:9669/";
     public static final String GRAPH_SPACE = "JDBC_TEST_SPACE";
     public static final String URL = JDBC_PREFIX + GRAPH_SPACE;
 
@@ -44,7 +44,7 @@ public class RunMeBeforeTest {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Test
-    public void createTestGraphSpace() throws SQLException, IOErrorException, AuthFailedException, NotValidConnectionException, UnknownHostException, InterruptedException, ClientServerIncompatibleException {
+    public void createTestGraphSpace() throws SQLException, IOErrorException, AuthFailedException, NotValidConnectionException, UnknownHostException, InterruptedException, ClientServerIncompatibleException, ClassNotFoundException {
 
         NebulaPoolConfig nebulaPoolConfig = new NebulaPoolConfig();
         List<HostAddress> addresses = Arrays.asList(new HostAddress(IP, PORT));
@@ -87,8 +87,7 @@ public class RunMeBeforeTest {
         poolProperties.put("waitTime", 1256);
 
         // when customizedDriver init, it will registers a new instance of itself with the DriverManager.
-        NebulaDriver customizedDriver = new NebulaDriver(poolProperties);
-
+        Class.forName("com.vesoft.nebula.jdbc.impl.NebulaDriver");
         Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
         Statement statement = connection.createStatement();
 
