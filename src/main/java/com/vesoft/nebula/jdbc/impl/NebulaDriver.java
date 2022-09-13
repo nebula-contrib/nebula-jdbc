@@ -6,11 +6,6 @@
 package com.vesoft.nebula.jdbc.impl;
 
 import static com.vesoft.nebula.jdbc.utils.NebulaJdbcUrlParser.JDBC_NEBULA_PREFIX;
-import com.vesoft.nebula.client.graph.NebulaPoolConfig;
-import com.vesoft.nebula.client.graph.data.HostAddress;
-import com.vesoft.nebula.client.graph.exception.*;
-import com.vesoft.nebula.client.graph.net.NebulaPool;
-import com.vesoft.nebula.client.graph.net.Session;
 import com.vesoft.nebula.jdbc.utils.ExceptionBuilder;
 import com.vesoft.nebula.jdbc.utils.NebulaJdbcUrlParser;
 import java.net.URISyntaxException;
@@ -19,8 +14,6 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
