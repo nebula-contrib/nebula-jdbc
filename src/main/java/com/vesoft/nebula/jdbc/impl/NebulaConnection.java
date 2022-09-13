@@ -8,7 +8,6 @@ package com.vesoft.nebula.jdbc.impl;
 import com.vesoft.nebula.client.graph.data.ResultSet;
 import com.vesoft.nebula.client.graph.exception.IOErrorException;
 import com.vesoft.nebula.client.graph.net.Session;
-import com.vesoft.nebula.jdbc.NebulaAbstractConnection;
 import com.vesoft.nebula.jdbc.NebulaAbstractResultSet;
 
 import com.vesoft.nebula.jdbc.utils.ExceptionBuilder;
