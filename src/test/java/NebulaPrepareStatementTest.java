@@ -29,10 +29,6 @@ public class NebulaPrepareStatementTest {
         driver = new NebulaDriver();
     }
 
-    @AfterAll
-    public void closeDriver(){
-        driver.closePool();
-    }
 
     @Test
     public void NebulaPrepareStatementTest() throws SQLException {

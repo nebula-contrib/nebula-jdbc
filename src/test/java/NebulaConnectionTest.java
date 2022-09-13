@@ -32,10 +32,6 @@ public class NebulaConnectionTest {
         driver = new NebulaDriver();
     }
 
-    @AfterAll
-    public void closeDriver(){
-        driver.closePool();
-    }
 
     @Test
     public void getDefaultConnectionWithoutAuthenticationTest() throws SQLException {

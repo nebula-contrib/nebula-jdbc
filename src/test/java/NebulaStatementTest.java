@@ -35,7 +35,6 @@ public class NebulaStatementTest {
     @AfterAll
     public void closeConnection() throws SQLException {
         connection.close();
-        driver.closePool();
     }
 
     @Test

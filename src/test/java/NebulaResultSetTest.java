@@ -44,7 +44,6 @@ public class NebulaResultSetTest {
     @AfterAll
     public void closeConnection() throws SQLException {
         connection.close();
-        driver.closePool();
     }
 
     @Test
