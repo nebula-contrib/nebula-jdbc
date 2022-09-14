@@ -70,7 +70,7 @@ public class NebulaDriver implements java.sql.Driver {
     public Connection connect(String url, Properties properties) throws SQLException {
         if (!acceptsURL(url)) {
             throw new SQLException("url: " + url + " is not accepted, " +
-                    "url example: jdbc:nebula://graphSpace " +
+                    "url example: jdbc:nebula://host_ip1:port,host_ip2:port/graphSpace " +
                     "make sure your url match this format.");
 
         }
