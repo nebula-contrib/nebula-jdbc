@@ -50,13 +50,13 @@ public class NebulaJdbcUrlParser {
                 throw new URISyntaxException("wrong space name path: " + path, uriString);
             }
         }
-        jdbcProperties.put("graphspace", graphSpace);
+        jdbcProperties.put(NebulaPropertyKey.DBNAME.getKeyName(), graphSpace);
 
         // parse graph address from url
         int indexOfAddress = jdbcUrl.indexOf("//");
         int indexOfSpace = jdbcUrl.indexOf("/", indexOfAddress + 2);
         String address = jdbcUrl.substring(indexOfAddress, indexOfSpace);
-        jdbcProperties.put("address", address);
+        jdbcProperties.put(NebulaPropertyKey.DBADDRESS.getKeyName(), address);
 
         return jdbcProperties;
     }

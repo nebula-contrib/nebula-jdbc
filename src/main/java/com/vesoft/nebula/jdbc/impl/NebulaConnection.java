@@ -53,14 +53,18 @@ public class NebulaConnection implements Connection {
 
 
     protected NebulaConnection(String url, Properties properties) throws SQLException {
-        this.properties = properties;
+        try {
+            this.properties = NebulaJdbcUrlParser.parse(url, properties);
+        } catch (Exception e) {
+            throw new SQLException(e);
+        }
         this.graphSpace = properties.getProperty(NebulaPropertyKey.DBNAME.getKeyName());
         initNebulaPool(url, properties);
         // check whether access the given graph space successfully.
         try {
             this.nebulaSession =
                     nebulaPool.getSession(properties.getProperty(NebulaPropertyKey.USER.getKeyName()),
-                    properties.getProperty(NebulaPropertyKey.PASSWORD.getKeyName()), true);
+                            properties.getProperty(NebulaPropertyKey.PASSWORD.getKeyName()), true);
             ResultSet result = nebulaSession.execute("use " + graphSpace);
             if (result.isSucceeded()) {
                 this.graphSpace = graphSpace;
@@ -211,7 +215,7 @@ public class NebulaConnection implements Connection {
 
     @Override
     public void setSchema(String schema) throws SQLException {
-        properties.setProperty("graphspace", schema);
+        properties.setProperty(NebulaPropertyKey.DBNAME.getKeyName(), schema);
     }
 
     public Properties getConnectionConfig() {

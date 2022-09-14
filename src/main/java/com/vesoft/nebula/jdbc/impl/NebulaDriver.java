@@ -25,8 +25,6 @@ public class NebulaDriver implements java.sql.Driver {
 
     private static final Logger log = LoggerFactory.getLogger(NebulaDriver.class);
 
-    protected Properties connectionConfig = new Properties();
-
     static {
         try {
             NebulaDriver driver = new NebulaDriver();
