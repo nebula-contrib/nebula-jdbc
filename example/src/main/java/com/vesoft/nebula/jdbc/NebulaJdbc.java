@@ -8,6 +8,7 @@ package com.vesoft.nebula.jdbc;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -15,9 +16,31 @@ import java.sql.Statement;
 public class NebulaJdbc {
     public static void main(String[] args) {
         try {
-            testJdbcWithHikari();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            testJdbc();
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void testJdbc() throws SQLException, ClassNotFoundException {
+        Class.forName("com.vesoft.nebula.jdbc.impl.NebulaDriver");
+
+        Connection connection = null;
+        ResultSet rs = null;
+        try {
+            connection = DriverManager.getConnection("jdbc:nebula://127.0.0.1:9669,127.0.0.1:9670/test", "root",
+                    "nebula");
+            rs = connection.createStatement().executeQuery("match (v:person) return v limit 1");
+            while (rs.next()) {
+                System.out.println(rs.getObject(1));
+            }
+        } finally {
+            if (connection != null) {
+                connection.close();
+            }
+            if (rs != null) {
+                rs.close();
+            }
         }
     }
 
@@ -37,7 +60,7 @@ public class NebulaJdbc {
             st = connection.createStatement();
             ResultSet rs = st.executeQuery("match (v:person) return v limit 1");
             // before get the ResultSet's content, we must execute rs.next() first. need to modify.
-            if(rs.next()){
+            if (rs.next()) {
                 System.out.println(rs.getObject(1));
             }
 
