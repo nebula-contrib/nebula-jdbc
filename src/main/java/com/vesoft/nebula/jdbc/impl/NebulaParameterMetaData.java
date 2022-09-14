@@ -14,7 +14,7 @@ public class NebulaParameterMetaData extends NebulaAbstractParameterMetaData{
 
     private static NebulaParameterMetaData nebulaParameterMetaData = null;
 
-    private NebulaParameterMetaData(NebulaPreparedStatement preparedStatement){
+    private NebulaParameterMetaData(NebulaPreparedStatementImpl preparedStatement){
         super();
         this.preparedStatement = preparedStatement;
     }
@@ -23,7 +23,7 @@ public class NebulaParameterMetaData extends NebulaAbstractParameterMetaData{
         super();
     }
 
-    public static ParameterMetaData getInstance(NebulaPreparedStatement preparedStatement){
+    public static ParameterMetaData getInstance(NebulaPreparedStatementImpl preparedStatement){
         if (nebulaParameterMetaData == null){
             nebulaParameterMetaData = new NebulaParameterMetaData(preparedStatement);
         }

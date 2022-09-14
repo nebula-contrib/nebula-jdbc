@@ -3,7 +3,7 @@
  * This source code is licensed under Apache 2.0 License.
  */
 
-import com.vesoft.nebula.jdbc.impl.NebulaDriver;
+import com.vesoft.nebula.jdbc.NebulaDriver;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ public class NebulaStatementTest {
 
     @BeforeAll
     public void getConnectionAndStatement() throws SQLException, ClassNotFoundException {
-        Class.forName("com.vesoft.nebula.jdbc.impl.NebulaDriver");
+        Class.forName("com.vesoft.nebula.jdbc.NebulaDriver");
         connection = DriverManager.getConnection(RunMeBeforeTest.URL, RunMeBeforeTest.USERNAME, RunMeBeforeTest.PASSWORD);
         statement = connection.createStatement();
     }

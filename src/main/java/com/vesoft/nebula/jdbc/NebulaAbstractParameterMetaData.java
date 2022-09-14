@@ -5,14 +5,14 @@
 
 package com.vesoft.nebula.jdbc;
 
-import com.vesoft.nebula.jdbc.impl.NebulaPreparedStatement;
+import com.vesoft.nebula.jdbc.impl.NebulaPreparedStatementImpl;
 import com.vesoft.nebula.jdbc.utils.ExceptionBuilder;
 
 import java.sql.SQLException;
 
 public abstract class NebulaAbstractParameterMetaData implements java.sql.ParameterMetaData{
 
-    protected NebulaPreparedStatement preparedStatement;
+    protected NebulaPreparedStatementImpl preparedStatement;
 
     protected NebulaAbstractParameterMetaData() {
 

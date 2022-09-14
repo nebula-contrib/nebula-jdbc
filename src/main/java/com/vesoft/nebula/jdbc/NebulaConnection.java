@@ -3,7 +3,7 @@
  * This source code is licensed under Apache 2.0 License.
  */
 
-package com.vesoft.nebula.jdbc.impl;
+package com.vesoft.nebula.jdbc;
 
 import com.vesoft.nebula.client.graph.NebulaPoolConfig;
 import com.vesoft.nebula.client.graph.data.HostAddress;
@@ -15,6 +15,8 @@ import com.vesoft.nebula.client.graph.exception.InvalidConfigException;
 import com.vesoft.nebula.client.graph.exception.NotValidConnectionException;
 import com.vesoft.nebula.client.graph.net.NebulaPool;
 import com.vesoft.nebula.client.graph.net.Session;
+import com.vesoft.nebula.jdbc.impl.NebulaPreparedStatementImpl;
+import com.vesoft.nebula.jdbc.impl.NebulaStatementImpl;
 import com.vesoft.nebula.jdbc.utils.ExceptionBuilder;
 import com.vesoft.nebula.jdbc.utils.NebulaJdbcUrlParser;
 import com.vesoft.nebula.jdbc.utils.NebulaPropertyKey;
@@ -142,7 +144,7 @@ public class NebulaConnection implements Connection {
     @Override
     public Statement createStatement() throws SQLException {
         this.checkClosed();
-        return new NebulaStatement(this);
+        return new NebulaStatementImpl(this);
     }
 
     @Override
@@ -170,7 +172,7 @@ public class NebulaConnection implements Connection {
     @Override
     public PreparedStatement prepareStatement(String rawNGQL) throws SQLException {
         this.checkClosed();
-        return new NebulaPreparedStatement(this, rawNGQL);
+        return new NebulaPreparedStatementImpl(this, rawNGQL);
     }
 
     @Override

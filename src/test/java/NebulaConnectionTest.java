@@ -3,9 +3,8 @@
  * This source code is licensed under Apache 2.0 License.
  */
 
-import com.vesoft.nebula.jdbc.impl.NebulaConnection;
-import com.vesoft.nebula.jdbc.impl.NebulaDriver;
-import org.junit.jupiter.api.AfterAll;
+import com.vesoft.nebula.jdbc.NebulaConnection;
+import com.vesoft.nebula.jdbc.NebulaDriver;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
