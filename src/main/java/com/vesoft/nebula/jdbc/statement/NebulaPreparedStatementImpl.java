@@ -3,10 +3,10 @@
  * This source code is licensed under Apache 2.0 License.
  */
 
-package com.vesoft.nebula.jdbc.impl;
+package com.vesoft.nebula.jdbc.statement;
 
 import com.vesoft.nebula.jdbc.NebulaConnection;
-import com.vesoft.nebula.jdbc.NebulaPreparedStatement;
+import com.vesoft.nebula.jdbc.NebulaParameterMetaData;
 
 import com.vesoft.nebula.jdbc.utils.ExceptionBuilder;
 import java.io.InputStream;

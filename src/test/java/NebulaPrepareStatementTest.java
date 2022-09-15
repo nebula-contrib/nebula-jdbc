@@ -4,7 +4,7 @@
  */
 
 import com.vesoft.nebula.jdbc.NebulaDriver;
-import com.vesoft.nebula.jdbc.impl.NebulaPreparedStatementImpl;
+import com.vesoft.nebula.jdbc.statement.NebulaPreparedStatementImpl;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;

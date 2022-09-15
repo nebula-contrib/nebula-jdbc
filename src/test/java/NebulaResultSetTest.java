@@ -5,7 +5,7 @@
 
 import com.vesoft.nebula.client.graph.data.DateTimeWrapper;
 import com.vesoft.nebula.jdbc.NebulaDriver;
-import com.vesoft.nebula.jdbc.impl.NebulaResultSet;
+import com.vesoft.nebula.jdbc.NebulaResultSet;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

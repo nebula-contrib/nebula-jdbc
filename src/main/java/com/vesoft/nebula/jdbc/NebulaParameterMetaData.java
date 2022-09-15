@@ -5,23 +5,50 @@
 
 package com.vesoft.nebula.jdbc;
 
-import com.vesoft.nebula.jdbc.impl.NebulaPreparedStatementImpl;
+import com.vesoft.nebula.jdbc.statement.NebulaPreparedStatementImpl;
+import com.vesoft.nebula.jdbc.statement.NebulaStatement;
 import com.vesoft.nebula.jdbc.utils.ExceptionBuilder;
-
+import java.sql.ParameterMetaData;
 import java.sql.SQLException;
 
-public abstract class NebulaAbstractParameterMetaData implements java.sql.ParameterMetaData{
+public class NebulaParameterMetaData implements ParameterMetaData{
 
-    protected NebulaPreparedStatementImpl preparedStatement;
+    private static NebulaParameterMetaData nebulaParameterMetaData = null;
+    private NebulaPreparedStatementImpl preparedStatement;
 
-    protected NebulaAbstractParameterMetaData() {
-
+    private NebulaParameterMetaData(NebulaPreparedStatementImpl preparedStatement){
+        this.preparedStatement = preparedStatement;
     }
 
-    /**
-     * -----------------------Not implement yet-------------------------
-     *
-     * */
+    private NebulaParameterMetaData(){
+        super();
+    }
+
+    public static ParameterMetaData getInstance(NebulaPreparedStatementImpl preparedStatement){
+        if (nebulaParameterMetaData == null){
+            nebulaParameterMetaData = new NebulaParameterMetaData(preparedStatement);
+        }
+        return nebulaParameterMetaData;
+    }
+
+    /**  If you want to get MetaData after PreparedStatement changes, the method below should be called. */
+    public static void release(){
+        nebulaParameterMetaData = null;
+    }
+
+    @Override
+    public int getParameterCount() throws SQLException {
+        return preparedStatement.getParametersNumber();
+    }
+
+    @Override
+    public String getParameterClassName(int param) throws SQLException {
+        Object parameter =  preparedStatement.getParameters().get(param);
+        if(parameter != null){
+            return parameter.getClass().getName();
+        }
+        return String.format("No such param with index [%d]", param);
+    }
 
     @Override
     public String getParameterTypeName(int param) throws SQLException {

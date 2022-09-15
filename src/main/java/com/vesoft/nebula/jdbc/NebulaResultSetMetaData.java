@@ -3,7 +3,7 @@
  * This source code is licensed under Apache 2.0 License.
  */
 
-package com.vesoft.nebula.jdbc.impl;
+package com.vesoft.nebula.jdbc;
 
 import com.vesoft.nebula.jdbc.utils.ExceptionBuilder;
 import java.sql.ResultSetMetaData;
