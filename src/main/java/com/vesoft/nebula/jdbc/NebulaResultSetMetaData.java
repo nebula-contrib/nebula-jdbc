@@ -18,8 +18,6 @@ public class NebulaResultSetMetaData implements ResultSetMetaData {
         this.nebulaResultSet = nebulaResultSet;
     }
 
-    private NebulaResultSetMetaData(){ }
-
     public static NebulaResultSetMetaData getInstance(NebulaResultSet nebulaResultSet){
         if(nebulaResultSetMetaData == null){
             nebulaResultSetMetaData = new NebulaResultSetMetaData(nebulaResultSet);

@@ -25,11 +25,9 @@ public class NebulaPreparedStatementImpl extends NebulaStatementImpl implements 
     protected String                  nGql;
     protected HashMap<Object, Object> parameters;
     protected int                     parametersNumber;
-    private NebulaConnection connection;
 
     public NebulaPreparedStatementImpl(NebulaConnection connection, String rawNGQL) {
         super(connection);
-        this.connection = connection;
        this.rawNGQL = rawNGQL;
     }
 

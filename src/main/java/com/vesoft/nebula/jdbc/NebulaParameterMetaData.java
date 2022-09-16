@@ -20,10 +20,6 @@ public class NebulaParameterMetaData implements ParameterMetaData{
         this.preparedStatement = preparedStatement;
     }
 
-    private NebulaParameterMetaData(){
-        super();
-    }
-
     public static ParameterMetaData getInstance(NebulaPreparedStatementImpl preparedStatement){
         if (nebulaParameterMetaData == null){
             nebulaParameterMetaData = new NebulaParameterMetaData(preparedStatement);

@@ -437,30 +437,17 @@ public class NebulaResultSet implements java.sql.ResultSet {
 
     @Override
     public int getType() throws SQLException {
-//        SUPPORTED_TYPE = TYPE_SCROLL_INSENSITIVE
         return SUPPORTED_TYPE;
     }
 
     @Override
     public int getConcurrency() throws SQLException {
-//        SUPPORTED_CONCURRENCY = CONCUR_READ_ONLY
         return SUPPORTED_CONCURRENCY;
     }
 
     @Override
     public int getHoldability() throws SQLException {
-//        SUPPORTED_HOLDABILITY = CLOSE_CURSORS_AT_COMMIT
         return SUPPORTED_HOLDABILITY;
-    }
-
-    @Override
-    public RowId getRowId(int columnIndex) throws SQLException {
-        throw ExceptionBuilder.buildUnsupportedOperationException();
-    }
-
-    @Override
-    public RowId getRowId(String columnLabel) throws SQLException {
-        throw ExceptionBuilder.buildUnsupportedOperationException();
     }
 
     @Override
@@ -472,6 +459,16 @@ public class NebulaResultSet implements java.sql.ResultSet {
      * -----------------------Not implement yet-------------------------
      *
      * */
+
+    @Override
+    public RowId getRowId(int columnIndex) throws SQLException {
+        throw ExceptionBuilder.buildUnsupportedOperationException();
+    }
+
+    @Override
+    public RowId getRowId(String columnLabel) throws SQLException {
+        throw ExceptionBuilder.buildUnsupportedOperationException();
+    }
 
     @Override
     public byte getByte(int columnIndex) throws SQLException {
