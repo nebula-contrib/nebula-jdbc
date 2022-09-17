@@ -23,7 +23,7 @@ public class NebulaJdbc {
     }
 
     public static void testJdbc() throws SQLException, ClassNotFoundException {
-        Class.forName("com.vesoft.nebula.jdbc.impl.NebulaDriver");
+        Class.forName("com.vesoft.nebula.jdbc.NebulaDriver");
 
         Connection connection = null;
         ResultSet rs = null;

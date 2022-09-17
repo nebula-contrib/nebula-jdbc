@@ -3,21 +3,20 @@
  * This source code is licensed under Apache 2.0 License.
  */
 
-package com.vesoft.nebula.jdbc;
+package com.vesoft.nebula.jdbc.statement;
 
-import com.vesoft.nebula.jdbc.impl.NebulaConnection;
+import com.vesoft.nebula.jdbc.NebulaConnection;
+import com.vesoft.nebula.jdbc.NebulaResultSet;
 import com.vesoft.nebula.jdbc.utils.ExceptionBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.util.Arrays;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public abstract class NebulaAbstractStatement implements java.sql.Statement{
-
+public class NebulaStatementImpl implements NebulaStatement {
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
     protected final String[] updateKeyword = {"update", "delete", "insert", "upsert", "create", "drop", "alter", "rebuild"};
     protected final String[] queryKeyword = {"match", "lookup", "go", "fetch", "find", "subgraph"};
@@ -28,11 +27,58 @@ public abstract class NebulaAbstractStatement implements java.sql.Statement{
     protected ResultSet currentResultSet;
     protected boolean isClosed = false;
 
-    public NebulaAbstractStatement(NebulaConnection connection) {
+
+    public NebulaStatementImpl(NebulaConnection connection) {
         this.nebulaConnection = connection;
     }
 
-    protected void checkReadOnly(String nGql) throws SQLException {
+
+    /** This method just return a boolean value to indicate whether succeed or not,
+     *  if you call it directly you can call getResultSet() to get currentResultSet to retrieve result from serve.
+     */
+    @Override
+    public boolean execute(String nGql) throws SQLException {
+        this.checkClosed();
+        this.nGql = nGql;
+        com.vesoft.nebula.client.graph.data.ResultSet nebulaResultSet = this.nebulaConnection.execute(nGql);
+        isExecuteSucceed = nebulaResultSet.isSucceeded();
+        if(!isExecuteSucceed){
+            int errorCode = nebulaResultSet.getErrorCode();
+            String errorMessage = nebulaResultSet.getErrorMessage();
+            throw new SQLException(String.format("nGql \"%s\" executed failed, error code: %d, error message: %s", nGql, errorCode, errorMessage));
+        }
+        this.currentResultSet = new NebulaResultSet(nebulaResultSet, this);
+        return true;
+    }
+
+    @Override
+    public ResultSet executeQuery(String nGql) throws SQLException {
+        this.checkReadOnly(nGql);
+        this.execute(nGql);
+        return currentResultSet;
+    }
+
+
+    /** This method will not return the number of data which influenced by the executed ngql.
+     *  If the user inserts multiple points or edges in a single insert statement, some of them may succeed,
+     *  but the server will only return to tell the user that it has failed, however, the user may actually be able to find out some of the data have inserted.
+    */
+    @Override
+    public int executeUpdate(String nGql) throws SQLException {
+        this.checkUpdate(nGql);
+        this.execute(nGql);
+        return 0;
+    }
+
+    @Override
+    public NebulaConnection getConnection() throws SQLException {
+        return this.nebulaConnection;
+    }
+
+
+
+    @Override
+    public void checkReadOnly(String nGql) throws SQLException {
         String lowerCaseNGQL = nGql.toLowerCase();
         List<String> splitNGQL = Arrays.asList(lowerCaseNGQL.split(" "));
         for (String updateItem : updateKeyword) {
@@ -52,7 +98,8 @@ public abstract class NebulaAbstractStatement implements java.sql.Statement{
                 ", please modify your nGql or use executeUpdate(), execute().");
     }
 
-    protected void checkUpdate(String nGql) throws SQLException {
+    @Override
+    public void checkUpdate(String nGql) throws SQLException {
         String lowerCaseNGQL = nGql.toLowerCase();
         List<String> splitNGQL = Arrays.asList(lowerCaseNGQL.split(" "));
         for (String updateItem : updateKeyword) {
@@ -65,6 +112,8 @@ public abstract class NebulaAbstractStatement implements java.sql.Statement{
                 ", please modify your nGql or use executeQuery(), execute().");
     }
 
+
+
     @Override
     public void close() throws SQLException {
         this.isClosed = true;
@@ -75,11 +124,15 @@ public abstract class NebulaAbstractStatement implements java.sql.Statement{
         return this.isClosed;
     }
 
+
+    @Override
     public void checkClosed() throws SQLException {
         if(this.isClosed){
             throw new SQLException("Statement already closed.");
         }
     }
+
+
 
     @Override
     public ResultSet getResultSet() throws SQLException {
@@ -108,11 +161,6 @@ public abstract class NebulaAbstractStatement implements java.sql.Statement{
     public int getResultSetType() throws SQLException {
         return this.currentResultSet.getType();
     }
-
-    /**
-    * -----------------------Not implement yet-------------------------
-     *
-    * */
 
     @Override
     public int getMaxFieldSize() throws SQLException {

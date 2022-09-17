@@ -3,10 +3,9 @@
  * This source code is licensed under Apache 2.0 License.
  */
 
-import com.vesoft.nebula.client.graph.NebulaPoolConfig;
 import com.vesoft.nebula.client.graph.data.HostAddress;
-import com.vesoft.nebula.jdbc.impl.NebulaConnection;
-import com.vesoft.nebula.jdbc.impl.NebulaDriver;
+import com.vesoft.nebula.jdbc.NebulaConnection;
+import com.vesoft.nebula.jdbc.NebulaDriver;
 import org.junit.jupiter.api.Test;
 
 import java.sql.*;

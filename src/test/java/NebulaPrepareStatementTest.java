@@ -3,9 +3,8 @@
  * This source code is licensed under Apache 2.0 License.
  */
 
-import com.vesoft.nebula.jdbc.impl.NebulaDriver;
-import com.vesoft.nebula.jdbc.impl.NebulaPreparedStatement;
-import org.junit.jupiter.api.AfterAll;
+import com.vesoft.nebula.jdbc.NebulaDriver;
+import com.vesoft.nebula.jdbc.statement.NebulaPreparedStatementImpl;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -49,7 +48,7 @@ public class NebulaPrepareStatementTest {
         insertPreparedStatement.setBoolean(5, false);
         insertPreparedStatement.setDate(6, Date.valueOf("1919-09-09"));
         insertPreparedStatement.setTime(7, Time.valueOf("16:16:16"));
-        NebulaPreparedStatement nebulaPreparedStatement = (NebulaPreparedStatement) insertPreparedStatement;
+        NebulaPreparedStatementImpl nebulaPreparedStatement = (NebulaPreparedStatementImpl) insertPreparedStatement;
         nebulaPreparedStatement.setDatetime(8, new java.util.Date());
 
         ParameterMetaData parameterMetaData = insertPreparedStatement.getParameterMetaData();

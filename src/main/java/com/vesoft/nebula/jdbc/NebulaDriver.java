@@ -3,7 +3,7 @@
  * This source code is licensed under Apache 2.0 License.
  */
 
-package com.vesoft.nebula.jdbc.impl;
+package com.vesoft.nebula.jdbc;
 
 import static com.vesoft.nebula.jdbc.utils.NebulaJdbcUrlParser.JDBC_NEBULA_PREFIX;
 import com.vesoft.nebula.jdbc.utils.ExceptionBuilder;

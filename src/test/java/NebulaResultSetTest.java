@@ -4,8 +4,8 @@
  */
 
 import com.vesoft.nebula.client.graph.data.DateTimeWrapper;
-import com.vesoft.nebula.jdbc.impl.NebulaDriver;
-import com.vesoft.nebula.jdbc.impl.NebulaResultSet;
+import com.vesoft.nebula.jdbc.NebulaDriver;
+import com.vesoft.nebula.jdbc.NebulaResultSet;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -36,7 +36,7 @@ public class NebulaResultSetTest {
 
     @BeforeAll
     public void getConnectionAndStatement() throws SQLException, ClassNotFoundException {
-        Class.forName("com.vesoft.nebula.jdbc.impl.NebulaDriver");
+        Class.forName("com.vesoft.nebula.jdbc.NebulaDriver");
         connection = DriverManager.getConnection(RunMeBeforeTest.URL, RunMeBeforeTest.USERNAME, RunMeBeforeTest.PASSWORD);
         statement = connection.createStatement();
     }

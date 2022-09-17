@@ -3,37 +3,143 @@
  * This source code is licensed under Apache 2.0 License.
  */
 
-package com.vesoft.nebula.jdbc;
+package com.vesoft.nebula.jdbc.statement;
 
-import com.vesoft.nebula.jdbc.impl.NebulaConnection;
-import com.vesoft.nebula.jdbc.impl.NebulaStatement;
+import com.vesoft.nebula.jdbc.NebulaConnection;
+import com.vesoft.nebula.jdbc.NebulaParameterMetaData;
+
 import com.vesoft.nebula.jdbc.utils.ExceptionBuilder;
-
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class NebulaAbstractPreparedStatement extends NebulaStatement implements PreparedStatement{
-
+public class NebulaPreparedStatementImpl extends NebulaStatementImpl implements NebulaPreparedStatement {
     protected String                  rawNGQL;
     protected String                  nGql;
     protected HashMap<Object, Object> parameters;
     protected int                     parametersNumber;
 
-    public NebulaAbstractPreparedStatement(NebulaConnection connection, String rawNGQL) {
+    public NebulaPreparedStatementImpl(NebulaConnection connection, String rawNGQL) {
         super(connection);
-        this.rawNGQL = rawNGQL;
-        this.parametersNumber = namedParameterCount(rawNGQL);
-        this.parameters = new HashMap<>(this.parametersNumber);
+       this.rawNGQL = rawNGQL;
     }
 
-    protected void checkParamsNumber(int parameterIndex) throws SQLException {
+    @Override
+    public ResultSet executeQuery() throws SQLException {
+        this.checkReadOnly(this.rawNGQL);
+        this.execute();
+        return currentResultSet;
+    }
+
+
+    /** This method will not return the number of data which influenced by the executed ngql.
+     *  If the user inserts multiple points or edges in a single insert statement, some of them may succeed,
+     *  but the server will only return to tell the user that it has failed, however, the user may actually be able to find out some of the data have inserted.
+     */
+    @Override
+    public int executeUpdate() throws SQLException {
+        this.checkUpdate(this.rawNGQL);
+        this.execute();
+        return 0;
+    }
+
+    @Override
+    public boolean execute() throws SQLException {
+        this.nGql = replacePlaceHolderWithParam(this.rawNGQL);
+        return this.execute(this.nGql);
+    }
+
+    private String replacePlaceHolderWithParam(String rawNGQL) throws SQLException {
+        Integer index = 1;
+        String digested = rawNGQL;
+
+        String regex = "\\?(?=[^\"]*(?:\"[^\"]*\"[^\"]*)*$)";
+        Matcher matcher = Pattern.compile(regex).matcher(digested);
+
+        while (matcher.find()) {
+            Object param = parameters.get(index);
+            if(param == null){
+                throw new SQLException(String.format("Can not get param in index [%d], please check your nGql.", index));
+            }
+
+            String paramTypeName = param.getClass().getTypeName();
+            switch (paramTypeName){
+                case ("java.lang.String"):
+                    param = String.format("\"%s\"", param);
+                    break;
+                case ("java.sql.Date"):
+                    param = String.format("date(\"%s\")", param);
+                    break;
+                case ("java.sql.Time"):
+                    param = String.format("time(\"%s\")", param);
+                    break;
+                case ("java.util.Date"):
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
+                    String datetimeString = formatter.format(param);
+                    param = String.format("datetime(\"%s\")", datetimeString);
+                    break;
+                default:
+                    break;
+            }
+
+            digested = digested.replaceFirst(regex, param.toString());
+            index++;
+        }
+
+        return digested;
+    }
+
+    /**  set methods  */
+
+    @Override
+    public void setBoolean(int parameterIndex, boolean x) throws SQLException {
+        insertParameter(parameterIndex, x);
+    }
+
+    @Override
+    public void setInt(int parameterIndex, int x) throws SQLException {
+        insertParameter(parameterIndex, x);
+    }
+
+    @Override
+    public void setDouble(int parameterIndex, double x) throws SQLException {
+        insertParameter(parameterIndex, x);
+    }
+
+    @Override
+    public void setString(int parameterIndex, String x) throws SQLException {
+        insertParameter(parameterIndex, x);
+    }
+
+    @Override
+    public void setDate(int parameterIndex, Date date) throws SQLException {
+        insertParameter(parameterIndex, date);
+    }
+
+    @Override
+    public void setTime(int parameterIndex, Time time) throws SQLException {
+        insertParameter(parameterIndex, time);
+    }
+
+    public void setDatetime(int parameterIndex, java.util.Date datetime) throws SQLException {
+        insertParameter(parameterIndex, datetime);
+    }
+
+    @Override
+    public ParameterMetaData getParameterMetaData() throws SQLException {
+        return NebulaParameterMetaData.getInstance(this);
+    }
+
+
+    @Override
+    public void checkParamsNumber(int parameterIndex) throws SQLException {
         if (parameterIndex > this.parametersNumber) {
             throw new SQLException("ParameterIndex does not correspond to a parameter marker in the nGQL statement.");
         }
@@ -49,7 +155,8 @@ public abstract class NebulaAbstractPreparedStatement extends NebulaStatement im
         return max;
     }
 
-    protected void insertParameter(int parameterIndex, Object obj) throws SQLException {
+    @Override
+    public void insertParameter(int parameterIndex, Object obj) throws SQLException {
         this.checkClosed();
         this.checkParamsNumber(parameterIndex);
         this.parameters.put(parameterIndex, obj);
@@ -63,7 +170,7 @@ public abstract class NebulaAbstractPreparedStatement extends NebulaStatement im
 
     @Override
     public void clearParameters() throws SQLException {
-        this.checkClosed();
+        checkClosed();
         this.parameters.clear();
     }
 
@@ -341,4 +448,5 @@ public abstract class NebulaAbstractPreparedStatement extends NebulaStatement im
     public long executeLargeUpdate() throws SQLException {
         throw  ExceptionBuilder.buildUnsupportedOperationException();
     }
+
 }

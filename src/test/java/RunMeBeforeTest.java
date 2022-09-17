@@ -12,7 +12,6 @@ import com.vesoft.nebula.client.graph.exception.IOErrorException;
 import com.vesoft.nebula.client.graph.exception.NotValidConnectionException;
 import com.vesoft.nebula.client.graph.net.NebulaPool;
 import com.vesoft.nebula.client.graph.net.Session;
-import com.vesoft.nebula.jdbc.impl.NebulaDriver;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,7 +86,7 @@ public class RunMeBeforeTest {
         poolProperties.put("waitTime", 1256);
 
         // when customizedDriver init, it will registers a new instance of itself with the DriverManager.
-        Class.forName("com.vesoft.nebula.jdbc.impl.NebulaDriver");
+        Class.forName("com.vesoft.nebula.jdbc.NebulaDriver");
         Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
         Statement statement = connection.createStatement();
 
