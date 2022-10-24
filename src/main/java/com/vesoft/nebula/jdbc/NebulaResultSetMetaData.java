@@ -8,6 +8,7 @@ package com.vesoft.nebula.jdbc;
 import com.vesoft.nebula.jdbc.utils.ExceptionBuilder;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.List;
 
 public class NebulaResultSetMetaData implements ResultSetMetaData {
 
@@ -18,41 +19,50 @@ public class NebulaResultSetMetaData implements ResultSetMetaData {
         this.nebulaResultSet = nebulaResultSet;
     }
 
-    public static NebulaResultSetMetaData getInstance(NebulaResultSet nebulaResultSet){
-        if(nebulaResultSetMetaData == null){
+    public static NebulaResultSetMetaData getInstance(NebulaResultSet nebulaResultSet) {
+        if (nebulaResultSetMetaData == null) {
             nebulaResultSetMetaData = new NebulaResultSetMetaData(nebulaResultSet);
         }
         return nebulaResultSetMetaData;
     }
 
-    /**  If you want to get MetaData after ResultSet changes, the method below should be called. */
-    public static void release(){
+    /**
+     * If you want to get MetaData after ResultSet changes, the method below should be called.
+     */
+    public static void release() {
         nebulaResultSetMetaData = null;
     }
 
     @Override
     public int getColumnCount() throws SQLException {
-        return this.nebulaResultSet.getColumnNames().size();
+        List<String> columnNames = getColumnNames();
+        return columnNames == null ? 0 : columnNames.size();
     }
 
     @Override
     public String getColumnName(int column) throws SQLException {
         int columnCount = this.getColumnCount();
-        if(column <= columnCount && column > 0){
+        if (column <= columnCount && column > 0) {
             return this.nebulaResultSet.getColumnNames().get(column - 1);
-        }else {
-            throw new SQLException(String.format("The numbers of column is [%d], your column index [%d] is invalid.", columnCount, column));
+        } else {
+            throw new SQLException(String.format("The numbers of column is [%d], your column " +
+                    "index [%d] is invalid.", columnCount, column));
         }
     }
 
     @Override
     public String getSchemaName(int column) throws SQLException {
         int columnCount = this.getColumnCount();
-        if(column <= columnCount && column > 0){
+        if (column <= columnCount && column > 0) {
             return this.nebulaResultSet.getNativeNebulaResultSet().getSpaceName();
-        }else {
-            throw new SQLException(String.format("The numbers of column is [%d], your column index [%d] is invalid.", columnCount, column));
+        } else {
+            throw new SQLException(String.format("The numbers of column is [%d], your column " +
+                    "index [%d] is invalid.", columnCount, column));
         }
+    }
+
+    private List<String> getColumnNames() {
+        return nebulaResultSet == null ? null : nebulaResultSet.getColumnNames();
     }
 
     @Override
