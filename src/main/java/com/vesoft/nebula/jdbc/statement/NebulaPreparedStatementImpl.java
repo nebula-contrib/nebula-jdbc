@@ -17,18 +17,23 @@ import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class NebulaPreparedStatementImpl extends NebulaStatementImpl implements NebulaPreparedStatement {
+
+    protected static final Pattern NAMED_PARAMETER_REGEX = Pattern.compile("\\?(?=[^\"]*(?:\"[^\"]*\"[^\"]*)*$)");
     protected String                  rawNGQL;
     protected String                  nGql;
-    protected HashMap<Object, Object> parameters;
+    protected Map<Object, Object> parameters;
     protected int                     parametersNumber;
 
     public NebulaPreparedStatementImpl(NebulaConnection connection, String rawNGQL) {
         super(connection);
        this.rawNGQL = rawNGQL;
+       this.parametersNumber = namedParameterCount(rawNGQL);
+       this.parameters = new HashMap<>();
     }
 
     @Override
@@ -60,8 +65,7 @@ public class NebulaPreparedStatementImpl extends NebulaStatementImpl implements 
         Integer index = 1;
         String digested = rawNGQL;
 
-        String regex = "\\?(?=[^\"]*(?:\"[^\"]*\"[^\"]*)*$)";
-        Matcher matcher = Pattern.compile(regex).matcher(digested);
+        Matcher matcher = NAMED_PARAMETER_REGEX.matcher(digested);
 
         while (matcher.find()) {
             Object param = parameters.get(index);
@@ -89,7 +93,7 @@ public class NebulaPreparedStatementImpl extends NebulaStatementImpl implements 
                     break;
             }
 
-            digested = digested.replaceFirst(regex, param.toString());
+            digested = NAMED_PARAMETER_REGEX.matcher(digested).replaceFirst(param.toString());
             index++;
         }
 
@@ -147,8 +151,7 @@ public class NebulaPreparedStatementImpl extends NebulaStatementImpl implements 
 
     protected int namedParameterCount(String rawNGQL) {
         int max = 0;
-        String regex = "\\?(?=[^\"]*(?:\"[^\"]*\"[^\"]*)*$)";
-        Matcher matcher = Pattern.compile(regex).matcher(rawNGQL);
+        Matcher matcher = NAMED_PARAMETER_REGEX.matcher(rawNGQL);
         while (matcher.find()) {
             max++;
         }
@@ -174,7 +177,7 @@ public class NebulaPreparedStatementImpl extends NebulaStatementImpl implements 
         this.parameters.clear();
     }
 
-    public HashMap<Object, Object> getParameters() {
+    public Map<Object, Object> getParameters() {
         return parameters;
     }
 
