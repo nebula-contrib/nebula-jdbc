@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -63,39 +64,41 @@ public class NebulaPreparedStatementImpl extends NebulaStatementImpl implements 
         return this.execute(this.nGql);
     }
 
-    private String replacePlaceHolderWithParam(String rawNGQL) throws SQLException {
+    protected String replacePlaceHolderWithParam(String rawNGQL) throws SQLException {
         Integer index = 1;
         String digested = rawNGQL;
 
         Matcher matcher = NAMED_PARAMETER_REGEX.matcher(digested);
 
         while (matcher.find()) {
-            Object param = parameters.get(index);
-            if(param == null){
+            if(!parameters.containsKey(index)){
                 throw new SQLException(String.format("Can not get param in index [%d], please check your nGql.", index));
             }
+            Object param = parameters.get(index);
 
-            String paramTypeName = param.getClass().getTypeName();
-            switch (paramTypeName){
-                case ("java.lang.String"):
-                    param = String.format("\"%s\"", param);
-                    break;
-                case ("java.sql.Date"):
-                    param = String.format("date(\"%s\")", param);
-                    break;
-                case ("java.sql.Time"):
-                    param = String.format("time(\"%s\")", param);
-                    break;
-                case ("java.util.Date"):
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
-                    String datetimeString = formatter.format(param);
-                    param = String.format("datetime(\"%s\")", datetimeString);
-                    break;
-                default:
-                    break;
+            if(param != null) {
+                String paramTypeName = param.getClass().getTypeName();
+                switch (paramTypeName) {
+                    case ("java.lang.String"):
+                        param = String.format("\"%s\"", param);
+                        break;
+                    case ("java.sql.Date"):
+                        param = String.format("date(\"%s\")", param);
+                        break;
+                    case ("java.sql.Time"):
+                        param = String.format("time(\"%s\")", param);
+                        break;
+                    case ("java.util.Date"):
+                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
+                        String datetimeString = formatter.format(param);
+                        param = String.format("datetime(\"%s\")", datetimeString);
+                        break;
+                    default:
+                        break;
+                }
             }
 
-            digested = NAMED_PARAMETER_REGEX.matcher(digested).replaceFirst(param.toString());
+            digested = NAMED_PARAMETER_REGEX.matcher(digested).replaceFirst(Objects.toString(param));
             index++;
         }
 
@@ -336,7 +339,7 @@ public class NebulaPreparedStatementImpl extends NebulaStatementImpl implements 
 
     @Override
     public void setNull(int parameterIndex, int sqlType) throws SQLException {
-        throw  ExceptionBuilder.buildUnsupportedOperationException();
+        insertParameter(parameterIndex, null);
     }
 
     @Override
