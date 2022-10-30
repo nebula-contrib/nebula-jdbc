@@ -15,6 +15,8 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.*;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -254,12 +256,62 @@ public class NebulaPreparedStatementImpl extends NebulaStatementImpl implements 
 
     @Override
     public void setObject(int parameterIndex, Object x, int targetSqlType) throws SQLException {
-        throw  ExceptionBuilder.buildUnsupportedOperationException();
+        insertParameter(parameterIndex, x);
+        //TODO: switch by targetSqlType for each java.sql.Types
     }
 
     @Override
     public void setObject(int parameterIndex, Object x) throws SQLException {
-        throw  ExceptionBuilder.buildUnsupportedOperationException();
+        checkClosed();
+        if (x == null) {
+            setNull(parameterIndex, Types.OTHER);
+        } else if (x instanceof SQLXML) {
+            setSQLXML(parameterIndex, (SQLXML) x);
+        } else if (x instanceof String) {
+            setString(parameterIndex, (String) x);
+        } else if (x instanceof BigDecimal) {
+            setBigDecimal(parameterIndex, (BigDecimal) x);
+        } else if (x instanceof Short) {
+            setShort(parameterIndex, (Short) x);
+        } else if (x instanceof Integer) {
+            setInt(parameterIndex, (Integer) x);
+        } else if (x instanceof Long) {
+            setLong(parameterIndex, (Long) x);
+        } else if (x instanceof Float) {
+            setFloat(parameterIndex, (Float) x);
+        } else if (x instanceof Double) {
+            setDouble(parameterIndex, (Double) x);
+        } else if (x instanceof byte[]) {
+            setBytes(parameterIndex, (byte[]) x);
+        } else if (x instanceof java.sql.Date) {
+            setDate(parameterIndex, (java.sql.Date) x);
+        } else if (x instanceof Time) {
+            setTime(parameterIndex, (Time) x);
+        } else if (x instanceof Timestamp) {
+            setTimestamp(parameterIndex, (Timestamp) x);
+        } else if (x instanceof Boolean) {
+            setBoolean(parameterIndex, (Boolean) x);
+        } else if (x instanceof Byte) {
+            setByte(parameterIndex, (Byte) x);
+        } else if (x instanceof Blob) {
+            setBlob(parameterIndex, (Blob) x);
+        } else if (x instanceof Clob) {
+            setClob(parameterIndex, (Clob) x);
+        } else if (x instanceof Array) {
+            setArray(parameterIndex, (Array) x);
+        } else if (x instanceof Character) {
+            setString(parameterIndex, ((Character) x).toString());
+        } else if (x instanceof java.time.LocalDate) {
+            setDate(parameterIndex, Date.valueOf((LocalDate) x));
+        } else if (x instanceof java.time.LocalTime) {
+            setTime(parameterIndex, Time.valueOf((java.time.LocalTime) x));
+        } else if (x instanceof java.time.LocalDateTime) {
+            setTimestamp(parameterIndex, Timestamp.valueOf((java.time.LocalDateTime) x));
+        } else if (x instanceof java.time.OffsetDateTime) {
+            setObject(parameterIndex, ((OffsetDateTime) x).toLocalDateTime());
+        } else {
+            throw new SQLException(String.format("Unsupported parameter type %s at index %d", x.getClass().getName(), parameterIndex));
+        }
     }
 
     @Override
