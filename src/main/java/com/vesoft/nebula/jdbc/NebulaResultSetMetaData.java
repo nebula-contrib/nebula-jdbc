@@ -12,25 +12,14 @@ import java.util.List;
 
 public class NebulaResultSetMetaData implements ResultSetMetaData {
 
-    private NebulaResultSet nebulaResultSet;
-    private static NebulaResultSetMetaData nebulaResultSetMetaData = null;
+    private final NebulaResultSet nebulaResultSet;
 
     private NebulaResultSetMetaData(NebulaResultSet nebulaResultSet) {
         this.nebulaResultSet = nebulaResultSet;
     }
 
     public static NebulaResultSetMetaData getInstance(NebulaResultSet nebulaResultSet) {
-        if (nebulaResultSetMetaData == null) {
-            nebulaResultSetMetaData = new NebulaResultSetMetaData(nebulaResultSet);
-        }
-        return nebulaResultSetMetaData;
-    }
-
-    /**
-     * If you want to get MetaData after ResultSet changes, the method below should be called.
-     */
-    public static void release() {
-        nebulaResultSetMetaData = null;
+        return new NebulaResultSetMetaData(nebulaResultSet);
     }
 
     @Override
@@ -102,7 +91,7 @@ public class NebulaResultSetMetaData implements ResultSetMetaData {
 
     @Override
     public String getColumnLabel(int column) throws SQLException {
-        throw ExceptionBuilder.buildUnsupportedOperationException();
+        return getColumnName(column);
     }
 
     @Override
