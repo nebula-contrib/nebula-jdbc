@@ -85,7 +85,7 @@ public class RunMeBeforeTest {
         poolProperties.put("intervalIdle", 1256);
         poolProperties.put("waitTime", 1256);
 
-        // when customizedDriver init, it will registers a new instance of itself with the DriverManager.
+        // when customizedDriver init, it will register a new instance of itself with the DriverManager.
         Class.forName("com.vesoft.nebula.jdbc.NebulaDriver");
         Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
         Statement statement = connection.createStatement();

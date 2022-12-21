@@ -202,7 +202,7 @@ public class NebulaConnection implements Connection {
 
     @Override
     public String getSchema() throws SQLException {
-        return this.graphSpace;
+        return this.properties.getProperty(NebulaPropertyKey.DBNAME.getKeyName());
     }
 
     @Override
