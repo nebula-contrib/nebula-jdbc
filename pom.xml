@@ -7,7 +7,7 @@
 
     <groupId>org.nebula-contrib</groupId>
     <artifactId>nebula-jdbc</artifactId>
-    <version>3.0.0</version>
+    <version>3.3.0</version>
 
 
     <properties>
