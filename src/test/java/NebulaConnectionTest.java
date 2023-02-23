@@ -83,4 +83,12 @@ public class NebulaConnectionTest {
 
     }
 
+
+    @Test
+    void testGetMetadata() throws SQLException {
+        try (NebulaConnection connection = (NebulaConnection) DriverManager.getConnection(RunMeBeforeTest.URL, RunMeBeforeTest.USERNAME, RunMeBeforeTest.PASSWORD)) {
+            assertNotNull(connection.getMetaData());
+        }
+    }
+
 }

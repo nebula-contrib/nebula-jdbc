@@ -3,6 +3,8 @@ package com.vesoft.nebula.jdbc.statement;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.stream.Stream;
+import java.sql.SQLException;
+import java.sql.Types;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -31,5 +33,43 @@ class NebulaPreparedStatementImplTest {
 	void testInit(){
 		NebulaPreparedStatementImpl statement = new NebulaPreparedStatementImpl(null, "");
 		assertNotNull(statement.getParameters());
+	}
+
+	@Test
+	void testSetObject() throws SQLException {
+		NebulaPreparedStatementImpl stmt = new NebulaPreparedStatementImpl(null,
+				"INSERT VERTEX vert (prop) VALUES \"v1\":(?))");
+		Object obj = Integer.valueOf(1);
+		stmt.setObject(1, Integer.valueOf(1));
+		assertEquals(obj, stmt.getParameters().get(1));
+	}
+
+	@Test
+	void testSetObject2() throws SQLException {
+		NebulaPreparedStatementImpl stmt = new NebulaPreparedStatementImpl(null,
+				"INSERT VERTEX vert (prop) VALUES \"v1\":(?))");
+		Object obj = Integer.valueOf(1);
+		stmt.setObject(1, Integer.valueOf(1), Types.INTEGER);
+		assertEquals(obj, stmt.getParameters().get(1));
+	}
+
+	@Test
+	void testSetNull() throws SQLException {
+		NebulaPreparedStatementImpl stmt = new NebulaPreparedStatementImpl(null,
+				"INSERT VERTEX vert (prop) VALUES \"v1\":(?))");
+		Object obj = Integer.valueOf(1);
+		stmt.setNull(1, Types.OTHER);
+		assertNull(stmt.getParameters().get(1));
+	}
+
+	@Test
+	void testReplaceNullParam() throws SQLException {
+		String nql = "INSERT VERTEX vert (prop) VALUES \"v1\":(?))";
+		String expected = "INSERT VERTEX vert (prop) VALUES \"v1\":(null))";
+		NebulaPreparedStatementImpl stmt = new NebulaPreparedStatementImpl(null,
+				nql);
+		stmt.setNull(1, Types.OTHER);
+		String resultNql = stmt.replacePlaceHolderWithParam(nql);
+		assertEquals(expected, resultNql);
 	}
 }

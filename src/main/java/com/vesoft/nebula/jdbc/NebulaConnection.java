@@ -282,7 +282,7 @@ public class NebulaConnection implements Connection {
 
     @Override
     public DatabaseMetaData getMetaData() throws SQLException {
-        throw ExceptionBuilder.buildUnsupportedOperationException();
+        return new NebulaDatabaseMetaData(this);
     }
 
     @Override

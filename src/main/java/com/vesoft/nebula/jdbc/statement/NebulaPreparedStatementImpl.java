@@ -15,8 +15,11 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.*;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -61,39 +64,41 @@ public class NebulaPreparedStatementImpl extends NebulaStatementImpl implements 
         return this.execute(this.nGql);
     }
 
-    private String replacePlaceHolderWithParam(String rawNGQL) throws SQLException {
+    protected String replacePlaceHolderWithParam(String rawNGQL) throws SQLException {
         Integer index = 1;
         String digested = rawNGQL;
 
         Matcher matcher = NAMED_PARAMETER_REGEX.matcher(digested);
 
         while (matcher.find()) {
-            Object param = parameters.get(index);
-            if(param == null){
+            if(!parameters.containsKey(index)){
                 throw new SQLException(String.format("Can not get param in index [%d], please check your nGql.", index));
             }
+            Object param = parameters.get(index);
 
-            String paramTypeName = param.getClass().getTypeName();
-            switch (paramTypeName){
-                case ("java.lang.String"):
-                    param = String.format("\"%s\"", param);
-                    break;
-                case ("java.sql.Date"):
-                    param = String.format("date(\"%s\")", param);
-                    break;
-                case ("java.sql.Time"):
-                    param = String.format("time(\"%s\")", param);
-                    break;
-                case ("java.util.Date"):
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
-                    String datetimeString = formatter.format(param);
-                    param = String.format("datetime(\"%s\")", datetimeString);
-                    break;
-                default:
-                    break;
+            if(param != null) {
+                String paramTypeName = param.getClass().getTypeName();
+                switch (paramTypeName) {
+                    case ("java.lang.String"):
+                        param = String.format("\"%s\"", param);
+                        break;
+                    case ("java.sql.Date"):
+                        param = String.format("date(\"%s\")", param);
+                        break;
+                    case ("java.sql.Time"):
+                        param = String.format("time(\"%s\")", param);
+                        break;
+                    case ("java.util.Date"):
+                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
+                        String datetimeString = formatter.format(param);
+                        param = String.format("datetime(\"%s\")", datetimeString);
+                        break;
+                    default:
+                        break;
+                }
             }
 
-            digested = NAMED_PARAMETER_REGEX.matcher(digested).replaceFirst(param.toString());
+            digested = NAMED_PARAMETER_REGEX.matcher(digested).replaceFirst(Objects.toString(param));
             index++;
         }
 
@@ -254,12 +259,62 @@ public class NebulaPreparedStatementImpl extends NebulaStatementImpl implements 
 
     @Override
     public void setObject(int parameterIndex, Object x, int targetSqlType) throws SQLException {
-        throw  ExceptionBuilder.buildUnsupportedOperationException();
+        insertParameter(parameterIndex, x);
+        //TODO: switch by targetSqlType for each java.sql.Types
     }
 
     @Override
     public void setObject(int parameterIndex, Object x) throws SQLException {
-        throw  ExceptionBuilder.buildUnsupportedOperationException();
+        checkClosed();
+        if (x == null) {
+            setNull(parameterIndex, Types.OTHER);
+        } else if (x instanceof SQLXML) {
+            setSQLXML(parameterIndex, (SQLXML) x);
+        } else if (x instanceof String) {
+            setString(parameterIndex, (String) x);
+        } else if (x instanceof BigDecimal) {
+            setBigDecimal(parameterIndex, (BigDecimal) x);
+        } else if (x instanceof Short) {
+            setShort(parameterIndex, (Short) x);
+        } else if (x instanceof Integer) {
+            setInt(parameterIndex, (Integer) x);
+        } else if (x instanceof Long) {
+            setLong(parameterIndex, (Long) x);
+        } else if (x instanceof Float) {
+            setFloat(parameterIndex, (Float) x);
+        } else if (x instanceof Double) {
+            setDouble(parameterIndex, (Double) x);
+        } else if (x instanceof byte[]) {
+            setBytes(parameterIndex, (byte[]) x);
+        } else if (x instanceof java.sql.Date) {
+            setDate(parameterIndex, (java.sql.Date) x);
+        } else if (x instanceof Time) {
+            setTime(parameterIndex, (Time) x);
+        } else if (x instanceof Timestamp) {
+            setTimestamp(parameterIndex, (Timestamp) x);
+        } else if (x instanceof Boolean) {
+            setBoolean(parameterIndex, (Boolean) x);
+        } else if (x instanceof Byte) {
+            setByte(parameterIndex, (Byte) x);
+        } else if (x instanceof Blob) {
+            setBlob(parameterIndex, (Blob) x);
+        } else if (x instanceof Clob) {
+            setClob(parameterIndex, (Clob) x);
+        } else if (x instanceof Array) {
+            setArray(parameterIndex, (Array) x);
+        } else if (x instanceof Character) {
+            setString(parameterIndex, ((Character) x).toString());
+        } else if (x instanceof java.time.LocalDate) {
+            setDate(parameterIndex, Date.valueOf((LocalDate) x));
+        } else if (x instanceof java.time.LocalTime) {
+            setTime(parameterIndex, Time.valueOf((java.time.LocalTime) x));
+        } else if (x instanceof java.time.LocalDateTime) {
+            setTimestamp(parameterIndex, Timestamp.valueOf((java.time.LocalDateTime) x));
+        } else if (x instanceof java.time.OffsetDateTime) {
+            setObject(parameterIndex, ((OffsetDateTime) x).toLocalDateTime());
+        } else {
+            throw new SQLException(String.format("Unsupported parameter type %s at index %d", x.getClass().getName(), parameterIndex));
+        }
     }
 
     @Override
@@ -284,7 +339,7 @@ public class NebulaPreparedStatementImpl extends NebulaStatementImpl implements 
 
     @Override
     public void setNull(int parameterIndex, int sqlType) throws SQLException {
-        throw  ExceptionBuilder.buildUnsupportedOperationException();
+        insertParameter(parameterIndex, null);
     }
 
     @Override
