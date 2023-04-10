@@ -9,7 +9,7 @@ There are the version correspondence between client and Nebula:
 |    v2.5     |     2.5.0, 2.5.1     |
 |   v2.6.2    | 2.6.0, 2.6.1, 2.6.2  |
 |   v3.0.0    |        3.0.0         |
-
+|   v3.3.0    |        3.x           |
 
 ## 0. Introduction
 
