@@ -111,6 +111,9 @@ public class NebulaStatementTest {
 
     }
 
-
+    @Test
+    void testGetWarnings() throws SQLException {
+        assertNull(statement.getWarnings());
+    }
 
 }
