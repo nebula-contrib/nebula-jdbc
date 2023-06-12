@@ -4,6 +4,7 @@
  */
 
 import com.vesoft.nebula.jdbc.NebulaDriver;
+import com.vesoft.nebula.jdbc.statement.NebulaStatementImpl;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -112,5 +113,8 @@ public class NebulaStatementTest {
     }
 
 
-
+    @Test
+    void testCheckReadOnlyShowQuery() throws SQLException {
+        new NebulaStatementImpl(null).checkReadOnly("show tags");
+    }
 }
