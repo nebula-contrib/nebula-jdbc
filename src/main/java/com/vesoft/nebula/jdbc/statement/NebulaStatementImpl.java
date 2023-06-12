@@ -204,8 +204,8 @@ public class NebulaStatementImpl implements NebulaStatement {
     }
 
     @Override
-    public SQLWarning getWarnings() throws SQLException {
-        throw ExceptionBuilder.buildUnsupportedOperationException();
+    public SQLWarning getWarnings() {
+        return null;
     }
 
     @Override
