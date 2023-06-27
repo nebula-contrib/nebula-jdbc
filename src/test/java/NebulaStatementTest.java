@@ -112,9 +112,14 @@ public class NebulaStatementTest {
 
     }
 
-
     @Test
     void testCheckReadOnlyShowQuery() throws SQLException {
         new NebulaStatementImpl(null).checkReadOnly("show tags");
     }
+
+    @Test
+    void testGetWarnings() throws SQLException {
+        assertNull(statement.getWarnings());
+    }
+
 }
