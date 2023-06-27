@@ -4,6 +4,7 @@
  */
 
 import com.vesoft.nebula.jdbc.NebulaDriver;
+import com.vesoft.nebula.jdbc.statement.NebulaStatementImpl;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -109,6 +110,11 @@ public class NebulaStatementTest {
         SQLException getResultSetHasBeenCalledException = assertThrows(SQLException.class, () -> statement.getResultSet());
         assertEquals("currentResultSet has been set to null, may have been called before.", getResultSetHasBeenCalledException.getMessage());
 
+    }
+
+    @Test
+    void testCheckReadOnlyShowQuery() throws SQLException {
+        new NebulaStatementImpl(null).checkReadOnly("show tags");
     }
 
     @Test

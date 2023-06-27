@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 public class NebulaStatementImpl implements NebulaStatement {
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
     protected final String[] updateKeyword = {"update", "delete", "insert", "upsert", "create", "drop", "alter", "rebuild"};
-    protected final String[] queryKeyword = {"match", "lookup", "go", "fetch", "find", "subgraph"};
+    protected final String[] queryKeyword = {"match", "lookup", "go", "fetch", "find", "subgraph", "show", "desc", "describe"};
 
     protected String nGql;
     protected NebulaConnection nebulaConnection;
